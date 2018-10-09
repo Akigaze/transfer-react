@@ -26,16 +26,39 @@ class Transfer extends Component {
         });
     }
 
+    backToOriginal=()=>{
+        let {originalCities,displayCities} = this.state;
+        let backedCities=displayCities.filter((city,i)=>{
+            return city.selected;
+        });
+        displayCities=displayCities.filter((city,i)=>{
+            return !city.selected;
+        });
+        originalCities=originalCities.concat(backedCities.map((city)=>{return{...city,selected:false}}));
+        originalCities.sort((pre,cur)=>{
+            return pre.id-cur.id;
+        });
+        this.setState((preState)=>{
+            return {originalCities:[...originalCities],displayCities:[...displayCities]}
+        });
+    }
+
     clickItem=(id,selected)=>{
-        let {originalCities} = this.state;
+        let {originalCities,displayCities} = this.state;
         originalCities.map((city,i)=>{
             if(city.id===id){
                 city.selected=selected;
             }
             return city;
-        })
+        });
+        displayCities.map((city,i)=>{
+            if(city.id===id){
+                city.selected=selected;
+            }
+            return city;
+        });
         this.setState((preState)=>{
-            return {...preState,originalCities}
+            return {originalCities,displayCities}
         })
     }
 
@@ -46,7 +69,7 @@ class Transfer extends Component {
                 <FeatureList cities={this.state.originalCities} clickItem={this.clickItem}/>
                 <div className="btn-list">
                     <input type="button" value="->" className="function-btn" onClick={this.addToDisplay}/><br/>
-                    <input type="button" value="<-" className="function-btn"/><br/>
+                    <input type="button" value="<-" className="function-btn" onClick={this.backToOriginal}/><br/>
                     <input type="button" value="up" className="function-btn"/><br/>
                     <input type="button" value="down" className="function-btn"/><br/>
                 </div>
