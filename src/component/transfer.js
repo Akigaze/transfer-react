@@ -59,7 +59,7 @@ class Transfer extends Component {
         });
         this.setState((preState)=>{
             return {originalCities,displayCities}
-        })
+        });
     }
 
     moveUp=()=>{
@@ -67,7 +67,7 @@ class Transfer extends Component {
         let cities=displayCities.filter((city)=>{
             return city.selected;
         });
-        if(cities.length>1){
+        if(cities.length!==1){
             return false;
         }
         let upperCity = cities[0];
@@ -76,10 +76,30 @@ class Transfer extends Component {
             let lastCity = displayCities[index-1];
             displayCities[index]=lastCity;
             displayCities[index-1]=upperCity;
+            this.setState((preState)=>{
+                return {originalCities,displayCities}
+            })
         }
-        this.setState((preState)=>{
-            return {originalCities,displayCities}
-        })
+    }
+
+    moveDown=()=>{
+        let {originalCities,displayCities} = this.state;
+        let cities=displayCities.filter((city)=>{
+            return city.selected;
+        });
+        if(cities.length!==1){
+            return false;
+        }
+        let downerCity = cities[0];
+        let index=displayCities.indexOf(downerCity);
+        if(index<displayCities.length-1){
+            let nextCity = displayCities[index+1];
+            displayCities[index]=nextCity;
+            displayCities[index+1]=downerCity;
+            this.setState((preState)=>{
+                return {originalCities,displayCities}
+            })
+        }
     }
 
     render(){
