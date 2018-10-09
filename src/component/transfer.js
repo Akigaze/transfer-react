@@ -126,7 +126,7 @@ class Transfer extends Component {
     render(){
         return(
             <div className="transfer">
-                <FeatureList cities={this.state.originalCities} clickItem={this.clickItem}/>
+                <FeatureList cities={this.state.originalCities} clickItem={this.clickItem} title="Original Cities"/>
                 <div className="btn-list">
                     <input type="button" value="->" className="function-btn" onClick={this.addToDisplay}/><br/>
                     <input type="button" value="<-" className="function-btn" onClick={this.backToOriginal}/><br/>
@@ -135,7 +135,7 @@ class Transfer extends Component {
                     <input type="button" value="up" className="function-btn" onClick={this.moveUp}/><br/>
                     <input type="button" value="down" className="function-btn" onClick={this.moveDown}/><br/>
                 </div>
-                <FeatureList cities={this.state.displayCities}  clickItem={this.clickItem}/>
+                <FeatureList cities={this.state.displayCities}  clickItem={this.clickItem} title="Display Cities"/>
             </div>
         )
     }

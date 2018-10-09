@@ -5,7 +5,7 @@
     margin: 10px;
     padding: 10px;
     background-color: #f8f8f8;
-    min-height: 420px;
+    min-height: 450px;
     min-width: 240px;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -49,5 +49,12 @@
     margin: 20px 0;
     font-weight: 400;
     font-size: 20px;
+}
 
+.reature-list-header{
+    font-weight: 600;
+    display: block;
+    min-height: 24px;
+    border-bottom: 2px solid #777;
+    padding: 8px;
 }

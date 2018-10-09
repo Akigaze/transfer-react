@@ -20,7 +20,9 @@ class FeatureList extends Component {
     render(){
         return(
             <div className="feature-div">
+
                 <ol className="feature-list">
+                    <span className="reature-list-header">{this.props.title}</span>
                     {this.getCityList()}
                 </ol>
             </div>
