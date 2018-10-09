@@ -1,7 +1,7 @@
 .feature-list{
     list-style: none;
     border-radius: 8px;
-    color: #222;
+    color: #282828;
     margin: 10px;
     padding: 10px;
     background-color: #f8f8f8;
@@ -21,6 +21,7 @@
 
 .selected-city{
     background: #31bcf3;
+    color: #eee;
     margin: 4px;
     width: 100%;
     border-radius: 3px;
@@ -57,4 +58,14 @@
     min-height: 24px;
     border-bottom: 2px solid #777;
     padding: 8px;
+}
+
+.city-item{
+    margin-left:10px;
+}
+
+.city-check-box{
+    height: 18px;
+    width: 18px;
+    background-color: white;
 }

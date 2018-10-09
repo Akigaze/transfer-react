@@ -17,8 +17,8 @@ class FeatureItem extends Component {
                 className={this.props.selected?"selected-city":"unselect-city"}
                 id={this.props.id}
             >
-                <input type="checkbox" checked={this.props.selected}/>
-                <span>{this.props.city}</span>
+                <input type="checkbox" className="city-check-box" checked={this.props.selected}/>
+                <span className="city-item">{this.props.city}</span>
             </li>
         )
     }
