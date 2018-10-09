@@ -2,18 +2,20 @@
     list-style: none;
     border-radius: 8px;
     color: #222;
-    margin: 0;
+    margin: 10px;
     padding: 10px;
     background-color: #f8f8f8;
     min-height: 420px;
     min-width: 240px;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
 }
 .feature-div{
 
 }
 
 .transfer{
-    border: 2px solid #444;
     display: flex;
 }
 
@@ -31,4 +33,21 @@
     width: 100%;
     border-radius: 3px;
     border-bottom: 1px solid #ccc;
+}
+
+.btn-list{
+    margin: 0 10px;
+    padding: 10px 0;
+}
+
+.function-btn{
+    width: 100%;
+    min-height: 28px;
+    background: #31bcf3;
+    border-radius: 3px;
+    border: 1px solid #6188fb;
+    margin: 20px 0;
+    font-weight: 400;
+    font-size: 20px;
+
 }

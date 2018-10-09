@@ -12,11 +12,11 @@ class Transfer extends Component {
         return(
             <div className="transfer">
                 <FeatureList cities={cityList}/>
-                <div>
-                    <input type="button" value="->"/><br/>
-                    <input type="button" value="<-"/><br/>
-                    <input type="button" value="up"/><br/>
-                    <input type="button" value="down"/><br/>
+                <div className="btn-list">
+                    <input type="button" value="->" className="function-btn"/><br/>
+                    <input type="button" value="<-" className="function-btn"/><br/>
+                    <input type="button" value="up" className="function-btn"/><br/>
+                    <input type="button" value="down" className="function-btn"/><br/>
                 </div>
                 <FeatureList cities={[]}/>
             </div>
