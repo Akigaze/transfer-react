@@ -1,12 +1,34 @@
 .feature-list{
     list-style: none;
-    background-color: #f8f8f8;
     border-radius: 8px;
     color: #222;
-    margin: 0
+    margin: 0;
+    padding: 10px;
+    background-color: #f8f8f8;
+    min-height: 420px;
+    min-width: 240px;
+}
+.feature-div{
+
 }
 
 .transfer{
     border: 2px solid #444;
     display: flex;
+}
+
+.selected-city{
+    background: #31bcf3;
+    margin: 4px;
+    width: 100%;
+    border-radius: 3px;
+    border-bottom: 1px solid #999;
+}
+
+.unselect-city{
+    background: #f8f8f8;
+    margin: 4px;
+    width: 100%;
+    border-radius: 3px;
+    border-bottom: 1px solid #ccc;
 }

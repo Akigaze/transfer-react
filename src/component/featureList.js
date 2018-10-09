@@ -1,22 +1,19 @@
 import React, {Component} from "react"
-import {cityList} from "../constant/list_data"
+import FeatureItem from "./featureItem"
 import '../style/transfer.css';
 
 
 class FeatureList extends Component {
     constructor(props) {
         super(props);
-        this.state = {cities:cityList};
+        this.state = {cities:props.cities};
     }
 
     getCityList(){
         const {cities} = this.state;
         let cityList = cities.map((city,index) => {
             return (
-                <li key={`city-${index}`}>
-                    <input type="checkbox" />
-                    {city}
-                </li>
+                <FeatureItem key={`city-${index}`} city={city}/>
             )
         });
         return cityList;
@@ -24,7 +21,7 @@ class FeatureList extends Component {
 
     render(){
         return(
-            <div>
+            <div className="feature-div">
                 <ol className="feature-list">
                     {this.getCityList()}
                 </ol>
