@@ -22,7 +22,7 @@ class Transfer extends Component {
         });
         displayCities=displayCities.concat(selectedCities);
         this.setState((preState)=>{
-            return {originalCities:[...originalCities],displayCities:[...displayCities]}
+            return {originalCities,displayCities}
         });
     }
 
@@ -39,7 +39,7 @@ class Transfer extends Component {
             return pre.id-cur.id;
         });
         this.setState((preState)=>{
-            return {originalCities:[...originalCities],displayCities:[...displayCities]}
+            return {originalCities,displayCities}
         });
     }
 
@@ -62,16 +62,35 @@ class Transfer extends Component {
         })
     }
 
+    moveUp=()=>{
+        let {originalCities,displayCities} = this.state;
+        let cities=displayCities.filter((city)=>{
+            return city.selected;
+        });
+        if(cities.length>1){
+            return false;
+        }
+        let upperCity = cities[0];
+        let index=displayCities.indexOf(upperCity);
+        if(index>0){
+            let lastCity = displayCities[index-1];
+            displayCities[index]=lastCity;
+            displayCities[index-1]=upperCity;
+        }
+        this.setState((preState)=>{
+            return {originalCities,displayCities}
+        })
+    }
+
     render(){
-        console.log(this.state);
         return(
             <div className="transfer">
                 <FeatureList cities={this.state.originalCities} clickItem={this.clickItem}/>
                 <div className="btn-list">
                     <input type="button" value="->" className="function-btn" onClick={this.addToDisplay}/><br/>
                     <input type="button" value="<-" className="function-btn" onClick={this.backToOriginal}/><br/>
-                    <input type="button" value="up" className="function-btn"/><br/>
-                    <input type="button" value="down" className="function-btn"/><br/>
+                    <input type="button" value="up" className="function-btn" onClick={this.moveUp}/><br/>
+                    <input type="button" value="down" className="function-btn" onClick={this.moveDown}/><br/>
                 </div>
                 <FeatureList cities={this.state.displayCities}  clickItem={this.clickItem}/>
             </div>

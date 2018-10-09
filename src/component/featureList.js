@@ -9,7 +9,6 @@ class FeatureList extends Component {
 
     getCityList(){
         let {cities} = this.props;
-        console.log(cities);
         let cityList = cities.map((city,index) => {
             return (
                 <FeatureItem key={`city-${index}`} city={city.cityName} id={city.id} selected={city.selected} click={this.props.clickItem}/>
