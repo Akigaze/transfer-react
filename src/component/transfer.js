@@ -8,8 +8,14 @@ class Transfer extends Component {
 
     render(){
         return(
-            <div>
-                I am a Transfer
+            <div className="transfer">
+                <FeatureList/>
+                <div>
+                    <input type="button" value="->"/><br/>
+                    <input type="button" value="<-"/><br/>
+                    <input type="button" value="up"/><br/>
+                    <input type="button" value="down"/><br/>
+                </div>
                 <FeatureList/>
             </div>
         )

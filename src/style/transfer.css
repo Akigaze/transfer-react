@@ -3,4 +3,10 @@
     background-color: #f8f8f8;
     border-radius: 8px;
     color: #222;
+    margin: 0
+}
+
+.transfer{
+    border: 2px solid #444;
+    display: flex;
 }
