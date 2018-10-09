@@ -26,6 +26,14 @@
     width: 100%;
     border-radius: 3px;
     border-bottom: 1px solid #999;
+    transition: 360ms;
+}
+
+.selected-city:hover{
+    background: #05a9ea;
+    color: #f2f2f2;
+    border-bottom: 1px solid #aaa;
+    transition: 320ms;
 }
 
 .unselect-city{
@@ -34,6 +42,14 @@
     width: 100%;
     border-radius: 3px;
     border-bottom: 1px solid #ccc;
+    transition: 360ms;
+}
+
+.unselect-city:hover{
+    color: #343434;
+    background: #c0e3f1;
+    border-bottom: 1px solid #aaa;
+    transition: 320ms;
 }
 
 .btn-list{
@@ -42,14 +58,37 @@
 }
 
 .function-btn{
+    color: #232323;
     width: 100%;
     min-height: 28px;
-    background: #31bcf3;
+    background: #f0f0f0;
     border-radius: 3px;
-    border: 1px solid #6188fb;
+    border: 1px solid #f3f3f3;
     margin: 20px 0;
     font-weight: 400;
-    font-size: 20px;
+    font-size: 18px;
+    transition: 360ms;
+}
+
+.function-btn:hover{
+    color: #f0f0f0;
+    background: #00a1d6;
+    border: 1px solid #00a1d6;
+    transition: 360ms;
+}
+
+.function-btn:active{
+    color: #f3f3f3;
+    background: #048dda;
+    border: 1px solid #0597ea;
+    transition: 300ms;
+}
+
+.function-btn:focus{
+    color: #f3f3f3;
+    background: #048dda;
+    border: 1px solid #0597ea;
+    transition: 300ms;
 }
 
 .reature-list-header{

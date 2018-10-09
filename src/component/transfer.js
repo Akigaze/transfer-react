@@ -123,17 +123,35 @@ class Transfer extends Component {
         }
     }
 
+    getFunctionBtnList(){
+        let functions=[
+            { func:this.addToDisplay, describe:" >" },
+            { func:this.backToOriginal, describe:"< " },
+            { func:this.addAllToDisplay, describe:"all >" },
+            { func:this.backAllToOriginal, describe:"< all" },
+            { func:this.moveUp, describe:"^" },
+            { func:this.moveDown, describe:"v" },
+        ];
+        let functionBtnList=functions.map((fun,i)=>{
+            return (
+                <div key={`fun-${i}`}>
+                    <input type="button"
+                        value={fun.describe}
+                        className="function-btn"
+                        onClick={fun.func} />
+                    <br/>
+                </div>
+            )
+        });
+        return functionBtnList;
+    }
+
     render(){
         return(
             <div className="transfer">
                 <FeatureList cities={this.state.originalCities} clickItem={this.clickItem} title="Original Cities"/>
                 <div className="btn-list">
-                    <input type="button" value="->" className="function-btn" onClick={this.addToDisplay}/><br/>
-                    <input type="button" value="<-" className="function-btn" onClick={this.backToOriginal}/><br/>
-                    <input type="button" value="all->" className="function-btn" onClick={this.addAllToDisplay}/><br/>
-                    <input type="button" value="<-all" className="function-btn" onClick={this.backAllToOriginal}/><br/>
-                    <input type="button" value="up" className="function-btn" onClick={this.moveUp}/><br/>
-                    <input type="button" value="down" className="function-btn" onClick={this.moveDown}/><br/>
+                    {this.getFunctionBtnList()}
                 </div>
                 <FeatureList cities={this.state.displayCities}  clickItem={this.clickItem} title="Display Cities"/>
             </div>
