@@ -12,6 +12,25 @@ class Transfer extends Component {
         this.state = {originalCities,displayCities:[]};
     }
 
+    clickItem=(id,selected)=>{
+        let {originalCities,displayCities} = this.state;
+        originalCities.map((city,i)=>{
+            if(city.id===id){
+                city.selected=selected;
+            }
+            return city;
+        });
+        displayCities.map((city,i)=>{
+            if(city.id===id){
+                city.selected=selected;
+            }
+            return city;
+        });
+        this.setState((preState)=>{
+            return {originalCities,displayCities}
+        });
+    }
+
     addToDisplay=()=>{
         let {originalCities,displayCities} = this.state;
         let selectedCities=originalCities.filter((city,i)=>{
@@ -43,19 +62,21 @@ class Transfer extends Component {
         });
     }
 
-    clickItem=(id,selected)=>{
+    addAllToDisplay=()=>{
         let {originalCities,displayCities} = this.state;
-        originalCities.map((city,i)=>{
-            if(city.id===id){
-                city.selected=selected;
-            }
-            return city;
+        displayCities=displayCities.concat(originalCities.map((city)=>{return {...city,selected:true}}));
+        originalCities=[];
+        this.setState((preState)=>{
+            return {originalCities,displayCities}
         });
-        displayCities.map((city,i)=>{
-            if(city.id===id){
-                city.selected=selected;
-            }
-            return city;
+    }
+
+    backAllToOriginal=()=>{
+        let {originalCities,displayCities} = this.state;
+        originalCities=originalCities.concat(displayCities.map((city)=>{return {...city,selected:false}}));
+        displayCities=[];
+        originalCities.sort((pre,cur)=>{
+            return pre.id-cur.id;
         });
         this.setState((preState)=>{
             return {originalCities,displayCities}
@@ -109,6 +130,8 @@ class Transfer extends Component {
                 <div className="btn-list">
                     <input type="button" value="->" className="function-btn" onClick={this.addToDisplay}/><br/>
                     <input type="button" value="<-" className="function-btn" onClick={this.backToOriginal}/><br/>
+                    <input type="button" value="all->" className="function-btn" onClick={this.addAllToDisplay}/><br/>
+                    <input type="button" value="<-all" className="function-btn" onClick={this.backAllToOriginal}/><br/>
                     <input type="button" value="up" className="function-btn" onClick={this.moveUp}/><br/>
                     <input type="button" value="down" className="function-btn" onClick={this.moveDown}/><br/>
                 </div>
