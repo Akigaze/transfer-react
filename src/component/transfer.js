@@ -10,8 +10,77 @@ class Transfer extends Component {
         let displayColumns = props.displayList.map((item,i)=>{
             return {columnName:item,id:i,selected:false}
         });
-        this.state = {availableColumns,displayColumns};
-        console.log(this.state);
+        let addAvailable=this.isAvailableWhenHasSelected(availableColumns);
+        let removeAvailable=this.isAvailableWhenHasSelected(displayColumns);
+        let removeAllAvailable=this.isAvailableWhenHasColumns(displayColumns);
+        let moveUpAvailable=this.isAvailableWhenOneCanUp(displayColumns);
+        let moveDownAvailable=this.isAvailableWhenOneCanDown(displayColumns);
+
+        this.state = {
+            availableColumns,
+            displayColumns,
+            addAvailable,
+            removeAvailable,
+            removeAllAvailable,
+            moveUpAvailable,
+            moveDownAvailable
+        };
+    }
+
+    isAvailableWhenHasSelected(columns){
+        return columns.some((col)=>{
+            return col.selected;
+        });
+    }
+
+    isAvailableWhenHasColumns(columns){
+        return columns.length>0;
+    }
+
+    isAvailableWhenSelectOnlyOne(columns){
+        let selectedCols=columns.filter((col)=>{
+            return col.selected;
+        });
+        return selectedCols.length===1;
+    }
+
+    isAvailableWhenOneCanDown(columns){
+        if(this.isAvailableWhenSelectOnlyOne(columns)){
+            let one=columns.find((col)=>{
+                return col.selected;
+            });
+            return columns.indexOf(one)<columns.length-1
+        }
+        return false;
+    }
+
+    isAvailableWhenOneCanUp(columns){
+        if(this.isAvailableWhenSelectOnlyOne(columns)){
+            let one=columns.find((col)=>{
+                return col.selected;
+            });
+            return columns.indexOf(one)>0;
+        }
+        return false;
+    }
+
+    updateState(availableColumns,displayColumns){
+        let addAvailable=this.isAvailableWhenHasSelected(availableColumns);
+        let removeAvailable=this.isAvailableWhenHasSelected(displayColumns);
+        let removeAllAvailable=this.isAvailableWhenHasColumns(displayColumns);
+        let moveUpAvailable=this.isAvailableWhenOneCanUp(displayColumns);
+        let moveDownAvailable=this.isAvailableWhenOneCanDown(displayColumns);
+        this.setState((preState)=>{
+            return {
+                availableColumns,
+                displayColumns,
+                addAvailable,
+                removeAvailable,
+                removeAllAvailable,
+                moveUpAvailable,
+                moveDownAvailable
+            }
+        });
     }
 
     clickItem=(id,selected)=>{
@@ -28,9 +97,7 @@ class Transfer extends Component {
             }
             return column;
         });
-        this.setState((preState)=>{
-            return {availableColumns,displayColumns}
-        });
+        this.updateState(availableColumns,displayColumns);
     }
 
     addToDisplay=()=>{
@@ -42,9 +109,7 @@ class Transfer extends Component {
             return !column.selected;
         });
         displayColumns=displayColumns.concat(selectedColumns);
-        this.setState((preState)=>{
-            return {availableColumns,displayColumns}
-        });
+        this.updateState(availableColumns,displayColumns);
     }
 
     backToAvailable=()=>{
@@ -59,18 +124,14 @@ class Transfer extends Component {
         availableColumns.sort((pre,cur)=>{
             return pre.id-cur.id;
         });
-        this.setState((preState)=>{
-            return {availableColumns,displayColumns}
-        });
+        this.updateState(availableColumns,displayColumns);
     }
 
     addAllToDisplay=()=>{
         let {availableColumns,displayColumns} = this.state;
         displayColumns=displayColumns.concat(availableColumns.map((column)=>{return {...column,selected:true}}));
         availableColumns=[];
-        this.setState((preState)=>{
-            return {availableColumns,displayColumns}
-        });
+        this.updateState(availableColumns,displayColumns);
     }
 
     backAllToAvailable=()=>{
@@ -80,9 +141,7 @@ class Transfer extends Component {
         availableColumns.sort((pre,cur)=>{
             return pre.id-cur.id;
         });
-        this.setState((preState)=>{
-            return {availableColumns,displayColumns}
-        });
+        this.updateState(availableColumns,displayColumns);
     }
 
     moveUp=()=>{
@@ -99,9 +158,7 @@ class Transfer extends Component {
             let lastColumn = displayColumns[index-1];
             displayColumns[index]=lastColumn;
             displayColumns[index-1]=upperColumn;
-            this.setState((preState)=>{
-                return {availableColumns,displayColumns}
-            })
+            this.updateState(availableColumns,displayColumns);
         }
     }
 
@@ -119,34 +176,45 @@ class Transfer extends Component {
             let nextColumn = displayColumns[index+1];
             displayColumns[index]=nextColumn;
             displayColumns[index+1]=downerColumn;
-            this.setState((preState)=>{
-                return {availableColumns,displayColumns}
-            })
+            this.updateState(availableColumns,displayColumns);
         }
     }
 
     render(){
+        let {
+            availableColumns,
+            displayColumns,
+            addAvailable,
+            removeAvailable,
+            removeAllAvailable,
+            moveUpAvailable,
+            moveDownAvailable
+        } = this.state;
         let selectColButtons=[
-            {text:"Add",clickHandler:this.addToDisplay},
-            {text:"Remove",clickHandler:this.backToAvailable},
-            {text:"Remove all",clickHandler:this.backAllToAvailable}
+            {text:"Add",clickHandler:this.addToDisplay,style:addAvailable},
+            {text:"Remove",clickHandler:this.backToAvailable,style:removeAvailable},
+            {text:"Remove all",clickHandler:this.backAllToAvailable,style:removeAllAvailable}
         ];
         let colOrderButtons=[
-            {text:"Move up",clickHandler:this.moveUp},
-            {text:"Move down",clickHandler:this.moveDown},
+            {text:"Move up",clickHandler:this.moveUp,style:moveUpAvailable},
+            {text:"Move down",clickHandler:this.moveDown,style:moveDownAvailable},
         ];
-        let {availableColumns,displayColumns}=this.state;
         return(
             <div className="transfer">
                 <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns"/>
                 <div className="btn-list">
                     <ButtonList title="Select Columns" buttons={selectColButtons}/>
-                    <ButtonList title="Columns Order" buttons={colOrderButtons}/>
+                    <ColumnBlank height="40" />
+                    <ButtonList className="order-btn-list" title="Columns Order" buttons={colOrderButtons}/>
                 </div>
                 <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
             </div>
         )
     }
+}
+
+export const ColumnBlank=(props)=>{
+    return <div style={{height:`${props.height}px`}}></div>
 }
 
 export const ButtonList=(props)=>{
@@ -156,9 +224,9 @@ export const ButtonList=(props)=>{
             <span className="btn-label">{title}</span>
             {
                 buttons.map((button)=>{
-                    let {text,clickHandler}=button;
+                    let {text,clickHandler,style}=button;
                     return (
-                        <input type="button" value={text} className="function-btn" onClick={clickHandler} />
+                        <input type="button" value={text} disabled={style?"":"disabled"} className={style?"function-btn-available":"function-btn-disabled"} onClick={clickHandler} />
                     );
                 })
             }

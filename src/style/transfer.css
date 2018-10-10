@@ -64,7 +64,7 @@
 
 .btn-list{
     margin: 0 10px;
-    padding: 40px 0;
+    padding: 36px 0;
     text-align: center;
 }
 
@@ -78,22 +78,15 @@
   letter-spacing: normal;
   color: #363b40;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 12px;
-  margin-top: 30px;
 }
-
-.function-btn{
-    color: #fff;
+.function-btn-disabled,.function-btn-available{
     margin: 16px 0;
     transition: 360ms;
     width: 100%;
     height: 33px;
     border-radius: 2px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-    background-color: #0b85ff;
-    border: 1px solid #0b85ff;
+    /* background-color: #0b85ff; */
     font-family: ProximaNova;
     font-size: 14px;
     font-weight: normal;
@@ -103,22 +96,35 @@
     letter-spacing: normal;
     display: block;
 }
+.function-btn-disabled{
+    background: #efefef;
+    color: #6b6b6b;
+    border: 1px solid #e2e2e2;
+}
 
-.function-btn:hover{
+.function-btn-available{
+    color: #fff;
+    /* background-color: #0b85ff; */
+    background: #1d8bfb;
+    border: 1px solid #0b85ff;
+
+}
+
+.function-btn-available:hover{
     color: #f0f0f0;
     background: #00a1d6;
     border: 1px solid #00a1d6;
     transition: 360ms;
 }
 
-.function-btn:active{
+.function-btn-available:active{
     color: #f3f3f3;
     background: #048dda;
     border: 1px solid #0597ea;
     transition: 300ms;
 }
 
-.function-btn:focus{
+.function-btn-available:focus{
     color: #f3f3f3;
     background: #0b85ff;
     border: 1px solid #0597ea;
