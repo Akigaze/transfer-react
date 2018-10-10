@@ -180,32 +180,34 @@ class Transfer extends Component {
         }
     }
 
+    getSelectColButtons(){
+        let {addAvailable, removeAvailable, removeAllAvailable} = this.state;
+        return [
+            {text:"Add",clickHandler:this.addToDisplay,available:addAvailable},
+            {text:"Remove",clickHandler:this.backToAvailable,available:removeAvailable},
+            {text:"Remove all",clickHandler:this.backAllToAvailable,available:removeAllAvailable}
+        ]
+    }
+
+    getColumnOrderButtons(){
+        let {moveUpAvailable, moveDownAvailable} = this.state;
+        return [
+            {text:"Move up",clickHandler:this.moveUp,available:moveUpAvailable},
+            {text:"Move down",clickHandler:this.moveDown,available:moveDownAvailable},
+        ]
+    }
+
     render(){
-        let {
-            availableColumns,
-            displayColumns,
-            addAvailable,
-            removeAvailable,
-            removeAllAvailable,
-            moveUpAvailable,
-            moveDownAvailable
-        } = this.state;
-        let selectColButtons=[
-            {text:"Add",clickHandler:this.addToDisplay,style:addAvailable},
-            {text:"Remove",clickHandler:this.backToAvailable,style:removeAvailable},
-            {text:"Remove all",clickHandler:this.backAllToAvailable,style:removeAllAvailable}
-        ];
-        let colOrderButtons=[
-            {text:"Move up",clickHandler:this.moveUp,style:moveUpAvailable},
-            {text:"Move down",clickHandler:this.moveDown,style:moveDownAvailable},
-        ];
+        let {availableColumns, displayColumns} = this.state;
+        let selectColButtons = this.getSelectColButtons()
+        let columnOrderButtons = this.getColumnOrderButtons();
         return(
             <div className="transfer">
                 <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns"/>
                 <div className="btn-list">
                     <ButtonList title="Select Columns" buttons={selectColButtons}/>
                     <ColumnBlank height="40" />
-                    <ButtonList className="order-btn-list" title="Columns Order" buttons={colOrderButtons}/>
+                    <ButtonList title="Columns Order" buttons={columnOrderButtons}/>
                 </div>
                 <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
             </div>
@@ -217,19 +219,27 @@ export const ColumnBlank=(props)=>{
     return <div style={{height:`${props.height}px`}}></div>
 }
 
-export const ButtonList=(props)=>{
+const mapButtonTags=(buttons)=>{
+    let tags = buttons.map((button,i)=>{
+        let {text,clickHandler,available}=button;
+        return (
+            <input key={`${text}-${i}`}
+                   type="button"
+                   value={text}
+                   disabled={available?"":"disabled"}
+                   className={available?"function-btn-available":"btn-disabled"}
+                   onClick={clickHandler} />
+        );
+    });
+    return tags;
+}
+
+const ButtonList=(props)=>{
     let {title,buttons}=props;
     return(
         <div>
             <span className="btn-label">{title}</span>
-            {
-                buttons.map((button)=>{
-                    let {text,clickHandler,style}=button;
-                    return (
-                        <input type="button" value={text} disabled={style?"":"disabled"} className={style?"function-btn-available":"function-btn-disabled"} onClick={clickHandler} />
-                    );
-                })
-            }
+            {mapButtonTags(buttons)}
         </div>
     )
 }
