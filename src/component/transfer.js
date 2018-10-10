@@ -7,18 +7,18 @@ class Transfer extends Component {
         this.initState(props);
     }
 
-    initState(props){
-        let availableColumns = props.availableList.map((item,i)=>{
-            return {columnName:item,id:i,selected:false}
+    initState(props) {
+        let availableColumns = props.availableList.map((item,i) => {
+            return {columnName:item, id:i, selected:false}
         });
-        let displayColumns = props.displayList.map((item,i)=>{
-            return {columnName:item,id:i,selected:false}
+        let displayColumns = props.displayList.map((item,i) => {
+            return {columnName:item, id:i, selected:false}
         });
-        let addAvailable=this.isAvailableWhenHasSelected(availableColumns);
-        let removeAvailable=this.isAvailableWhenHasSelected(displayColumns);
-        let removeAllAvailable=this.isAvailableWhenHasColumns(displayColumns);
-        let moveUpAvailable=this.isAvailableWhenOneCanUp(displayColumns);
-        let moveDownAvailable=this.isAvailableWhenOneCanDown(displayColumns);
+        let addAvailable = this.isAvailableWhenHasSelected(availableColumns);
+        let removeAvailable = this.isAvailableWhenHasSelected(displayColumns);
+        let removeAllAvailable = this.isAvailableWhenHasColumns(displayColumns);
+        let moveUpAvailable = this.isAvailableWhenOneCanUp(displayColumns);
+        let moveDownAvailable = this.isAvailableWhenOneCanDown(displayColumns);
 
         this.state = {
             availableColumns,
@@ -31,42 +31,42 @@ class Transfer extends Component {
         };
     }
 
-    isAvailableWhenHasSelected(columns){
-        return columns.some((col)=>{ return col.selected });
+    isAvailableWhenHasSelected(columns) {
+        return columns.some((col) => { return col.selected });
     }
 
-    isAvailableWhenHasColumns(columns){
-        return columns.length>0;
+    isAvailableWhenHasColumns(columns) {
+        return columns.length > 0;
     }
 
-    isAvailableWhenSelectOnlyOne(columns){
-        let selectedCols=columns.filter((col)=>{ return col.selected });
-        return selectedCols.length===1;
+    isAvailableWhenSelectOnlyOne(columns) {
+        let selectedCols = columns.filter((col) => { return col.selected });
+        return selectedCols.length === 1;
     }
 
-    isAvailableWhenOneCanDown(columns){
-        if(this.isAvailableWhenSelectOnlyOne(columns)){
-            let one=columns.find((col)=>{ return col.selected });
-            return columns.indexOf(one)<columns.length-1
+    isAvailableWhenOneCanDown(columns) {
+        if(this.isAvailableWhenSelectOnlyOne(columns)) {
+            let one = columns.find((col) => { return col.selected });
+            return columns.indexOf(one) < columns.length - 1
         }
         return false;
     }
 
-    isAvailableWhenOneCanUp(columns){
-        if(this.isAvailableWhenSelectOnlyOne(columns)){
-            let one=columns.find((col)=>{ return col.selected });
-            return columns.indexOf(one)>0;
+    isAvailableWhenOneCanUp(columns) {
+        if(this.isAvailableWhenSelectOnlyOne(columns)) {
+            let one = columns.find((col) => { return col.selected });
+            return columns.indexOf(one) > 0;
         }
         return false;
     }
 
     updateState(availableColumns,displayColumns){
-        let addAvailable=this.isAvailableWhenHasSelected(availableColumns);
-        let removeAvailable=this.isAvailableWhenHasSelected(displayColumns);
-        let removeAllAvailable=this.isAvailableWhenHasColumns(displayColumns);
-        let moveUpAvailable=this.isAvailableWhenOneCanUp(displayColumns);
-        let moveDownAvailable=this.isAvailableWhenOneCanDown(displayColumns);
-        this.setState((preState)=>{
+        let addAvailable = this.isAvailableWhenHasSelected(availableColumns);
+        let removeAvailable = this.isAvailableWhenHasSelected(displayColumns);
+        let removeAllAvailable = this.isAvailableWhenHasColumns(displayColumns);
+        let moveUpAvailable = this.isAvailableWhenOneCanUp(displayColumns);
+        let moveDownAvailable = this.isAvailableWhenOneCanDown(displayColumns);
+        this.setState((preState) => {
             return {
                 availableColumns,
                 displayColumns,
@@ -79,98 +79,110 @@ class Transfer extends Component {
         });
     }
 
-    clickItem=(id,selected)=>{
-        let {availableColumns,displayColumns} = this.state;
-        availableColumns=availableColumns.map((column,i)=>{
-            return column.id===id?{...column,selected}:column;
+    clickItem = (id, selected) => {
+        let {availableColumns, displayColumns} = this.state;
+        availableColumns = availableColumns.map((column) => {
+            return column.id === id ? {...column, selected} : column;
         });
-        displayColumns=displayColumns.map((column,i)=>{
-            return column.id===id?{...column,selected}:column;
+        displayColumns = displayColumns.map((column) => {
+            return column.id === id ? {...column, selected} : column;
         });
-        this.updateState(availableColumns,displayColumns);
+        this.updateState(availableColumns, displayColumns);
     }
 
-    concatABC(givenList,recivedList){
-        let selectedColumns=givenList.filter((column,i)=>{
+    transferSelectedItems(givenList, recivedList) {
+        let selectedColumns = givenList.filter((column) => {
             return column.selected;
         });
-        givenList=givenList.filter((column,i)=>{
+        givenList = givenList.filter((column) => {
             return !column.selected;
         });
-        recivedList=recivedList.concat(selectedColumns);
-        return [givenList,recivedList];
+        recivedList = recivedList.concat(selectedColumns);
+        return [givenList, recivedList];
     }
 
-    addToDisplay=()=>{
-        let {availableColumns,displayColumns} = this.state;
-        this.updateState(...this.concatABC(availableColumns,displayColumns));
+    addToDisplay = () => {
+        let {availableColumns, displayColumns} = this.state;
+        this.updateState(...this.transferSelectedItems(
+            availableColumns, displayColumns
+        ));
     }
 
-    backToAvailable=()=>{
-        let {availableColumns,displayColumns} = this.state;
-        [displayColumns,availableColumns]=this.concatABC(displayColumns,availableColumns)
-        availableColumns.sort((pre,cur)=>{ return pre.id-cur.id });
-        this.updateState(availableColumns,displayColumns);
+    backToAvailable = () => {
+        let {availableColumns, displayColumns} = this.state;
+        [displayColumns, availableColumns] = this.transferSelectedItems(
+            displayColumns, availableColumns
+        );
+        availableColumns.sort((pre, cur) => { return pre.id-cur.id });
+        this.updateState(availableColumns, displayColumns);
     }
 
-    addAllToDisplay=()=>{
+    addAllToDisplay = () => {
         let {availableColumns,displayColumns} = this.state;
-        displayColumns=displayColumns.concat(availableColumns.map((column)=>{return {...column,selected:true}}));
-        availableColumns=[];
-        this.updateState(availableColumns,displayColumns);
+        displayColumns = displayColumns.concat(
+            availableColumns.map((column) => {
+                return {...column,selected:true}
+            })
+        );
+        availableColumns = [];
+        this.updateState(availableColumns, displayColumns);
     }
 
-    backAllToAvailable=()=>{
-        let {availableColumns,displayColumns} = this.state;
-        availableColumns=availableColumns.concat(displayColumns.map((column)=>{return {...column,selected:true}}));
+    backAllToAvailable = () => {
+        let {availableColumns, displayColumns} = this.state;
+        availableColumns = availableColumns.concat(
+            displayColumns.map((column) => {
+                return {...column, selected:true}
+            })
+        );
         displayColumns=[];
         availableColumns.sort((pre,cur)=>{ return pre.id-cur.id });
         this.updateState(availableColumns,displayColumns);
     }
 
-    moveUp=()=>{
-        let {availableColumns,displayColumns} = this.state;
-        let selectedCol= this.getOnlyMoveItem(displayColumns);
-        if(selectedCol!==null){
-            let index=displayColumns.indexOf(selectedCol);
-            if(index>0){
-                displayColumns=swap(displayColumns,index-1,index);
-                this.updateState(availableColumns,displayColumns);
+    moveUp = () => {
+        let {availableColumns, displayColumns} = this.state;
+        let selectedCol = this.getOnlyMoveItem(displayColumns);
+        if (selectedCol !== null) {
+            let index = displayColumns.indexOf(selectedCol);
+            if (index > 0) {
+                displayColumns = swap(displayColumns, index-1, index);
+                this.updateState(availableColumns, displayColumns);
             }
         }
     }
 
-    moveDown=()=>{
-        let {availableColumns,displayColumns} = this.state;
+    moveDown = () => {
+        let {availableColumns, displayColumns} = this.state;
         let selectedCol= this.getOnlyMoveItem(displayColumns);
-        if(selectedCol!==null){
-            let index=displayColumns.indexOf(selectedCol);
-            if(index<displayColumns.length-1){
-                displayColumns=swap(displayColumns,index,index+1)
-                this.updateState(availableColumns,displayColumns);
+        if (selectedCol !== null) {
+            let index = displayColumns.indexOf(selectedCol);
+            if (index < displayColumns.length-1) {
+                displayColumns = swap(displayColumns, index, index+1)
+                this.updateState(availableColumns, displayColumns);
             }
         }
     }
 
-    getOnlyMoveItem(columns){
-        let selectedCols=columns.filter(column => { return column.selected });
-        return selectedCols.length===1?selectedCols[0]:null;
+    getOnlyMoveItem (columns) {
+        let selectedCols = columns.filter(column => { return column.selected });
+        return selectedCols.length ===1 ? selectedCols[0] : null;
     }
 
     getSelectColButtons(){
         let {addAvailable, removeAvailable, removeAllAvailable} = this.state;
         return [
-            {text:"Add",clickHandler:this.addToDisplay,available:addAvailable},
-            {text:"Remove",clickHandler:this.backToAvailable,available:removeAvailable},
-            {text:"Remove all",clickHandler:this.backAllToAvailable,available:removeAllAvailable}
+            {text:"Add", clickHandler:this.addToDisplay, available:addAvailable},
+            {text:"Remove", clickHandler:this.backToAvailable, available:removeAvailable},
+            {text:"Remove all", clickHandler:this.backAllToAvailable, available:removeAllAvailable}
         ]
     }
 
     getColumnOrderButtons(){
         let {moveUpAvailable, moveDownAvailable} = this.state;
         return [
-            {text:"Move up",clickHandler:this.moveUp,available:moveUpAvailable},
-            {text:"Move down",clickHandler:this.moveDown,available:moveDownAvailable},
+            {text:"Move up", clickHandler:this.moveUp, available:moveUpAvailable},
+            {text:"Move down", clickHandler:this.moveDown, available:moveDownAvailable},
         ]
     }
 
