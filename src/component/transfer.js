@@ -4,6 +4,10 @@ import FeatureList from "./featureList"
 class Transfer extends Component {
     constructor(props) {
         super(props);
+        this.initState(props);
+    }
+
+    initState(props){
         let availableColumns = props.availableList.map((item,i)=>{
             return {columnName:item,id:i,selected:false}
         });
@@ -28,9 +32,7 @@ class Transfer extends Component {
     }
 
     isAvailableWhenHasSelected(columns){
-        return columns.some((col)=>{
-            return col.selected;
-        });
+        return columns.some((col)=>{ return col.selected });
     }
 
     isAvailableWhenHasColumns(columns){
@@ -38,17 +40,13 @@ class Transfer extends Component {
     }
 
     isAvailableWhenSelectOnlyOne(columns){
-        let selectedCols=columns.filter((col)=>{
-            return col.selected;
-        });
+        let selectedCols=columns.filter((col)=>{ return col.selected });
         return selectedCols.length===1;
     }
 
     isAvailableWhenOneCanDown(columns){
         if(this.isAvailableWhenSelectOnlyOne(columns)){
-            let one=columns.find((col)=>{
-                return col.selected;
-            });
+            let one=columns.find((col)=>{ return col.selected });
             return columns.indexOf(one)<columns.length-1
         }
         return false;
@@ -56,9 +54,7 @@ class Transfer extends Component {
 
     isAvailableWhenOneCanUp(columns){
         if(this.isAvailableWhenSelectOnlyOne(columns)){
-            let one=columns.find((col)=>{
-                return col.selected;
-            });
+            let one=columns.find((col)=>{ return col.selected });
             return columns.indexOf(one)>0;
         }
         return false;
@@ -85,45 +81,35 @@ class Transfer extends Component {
 
     clickItem=(id,selected)=>{
         let {availableColumns,displayColumns} = this.state;
-        availableColumns.map((column,i)=>{
-            if(column.id===id){
-                column.selected=selected;
-            }
-            return column;
+        availableColumns=availableColumns.map((column,i)=>{
+            return column.id===id?{...column,selected}:column;
         });
-        displayColumns.map((column,i)=>{
-            if(column.id===id){
-                column.selected=selected;
-            }
-            return column;
+        displayColumns=displayColumns.map((column,i)=>{
+            return column.id===id?{...column,selected}:column;
         });
         this.updateState(availableColumns,displayColumns);
+    }
+
+    concatABC(givenList,recivedList){
+        let selectedColumns=givenList.filter((column,i)=>{
+            return column.selected;
+        });
+        givenList=givenList.filter((column,i)=>{
+            return !column.selected;
+        });
+        recivedList=recivedList.concat(selectedColumns);
+        return [givenList,recivedList];
     }
 
     addToDisplay=()=>{
         let {availableColumns,displayColumns} = this.state;
-        let selectedColumns=availableColumns.filter((column,i)=>{
-            return column.selected;
-        });
-        availableColumns=availableColumns.filter((column,i)=>{
-            return !column.selected;
-        });
-        displayColumns=displayColumns.concat(selectedColumns);
-        this.updateState(availableColumns,displayColumns);
+        this.updateState(...this.concatABC(availableColumns,displayColumns));
     }
 
     backToAvailable=()=>{
         let {availableColumns,displayColumns} = this.state;
-        let backedColumns=displayColumns.filter((column,i)=>{
-            return column.selected;
-        });
-        displayColumns=displayColumns.filter((column,i)=>{
-            return !column.selected;
-        });
-        availableColumns=availableColumns.concat(backedColumns);
-        availableColumns.sort((pre,cur)=>{
-            return pre.id-cur.id;
-        });
+        [displayColumns,availableColumns]=this.concatABC(displayColumns,availableColumns)
+        availableColumns.sort((pre,cur)=>{ return pre.id-cur.id });
         this.updateState(availableColumns,displayColumns);
     }
 
@@ -138,46 +124,37 @@ class Transfer extends Component {
         let {availableColumns,displayColumns} = this.state;
         availableColumns=availableColumns.concat(displayColumns.map((column)=>{return {...column,selected:true}}));
         displayColumns=[];
-        availableColumns.sort((pre,cur)=>{
-            return pre.id-cur.id;
-        });
+        availableColumns.sort((pre,cur)=>{ return pre.id-cur.id });
         this.updateState(availableColumns,displayColumns);
     }
 
     moveUp=()=>{
         let {availableColumns,displayColumns} = this.state;
-        let columns=displayColumns.filter((column)=>{
-            return column.selected;
-        });
-        if(columns.length!==1){
-            return false;
-        }
-        let upperColumn = columns[0];
-        let index=displayColumns.indexOf(upperColumn);
-        if(index>0){
-            let lastColumn = displayColumns[index-1];
-            displayColumns[index]=lastColumn;
-            displayColumns[index-1]=upperColumn;
-            this.updateState(availableColumns,displayColumns);
+        let selectedCol= this.getOnlyMoveItem(displayColumns);
+        if(selectedCol!==null){
+            let index=displayColumns.indexOf(selectedCol);
+            if(index>0){
+                displayColumns=swap(displayColumns,index-1,index);
+                this.updateState(availableColumns,displayColumns);
+            }
         }
     }
 
     moveDown=()=>{
         let {availableColumns,displayColumns} = this.state;
-        let columns=displayColumns.filter((column)=>{
-            return column.selected;
-        });
-        if(columns.length!==1){
-            return false;
+        let selectedCol= this.getOnlyMoveItem(displayColumns);
+        if(selectedCol!==null){
+            let index=displayColumns.indexOf(selectedCol);
+            if(index<displayColumns.length-1){
+                displayColumns=swap(displayColumns,index,index+1)
+                this.updateState(availableColumns,displayColumns);
+            }
         }
-        let downerColumn = columns[0];
-        let index=displayColumns.indexOf(downerColumn);
-        if(index<displayColumns.length-1){
-            let nextColumn = displayColumns[index+1];
-            displayColumns[index]=nextColumn;
-            displayColumns[index+1]=downerColumn;
-            this.updateState(availableColumns,displayColumns);
-        }
+    }
+
+    getOnlyMoveItem(columns){
+        let selectedCols=columns.filter(column => { return column.selected });
+        return selectedCols.length===1?selectedCols[0]:null;
     }
 
     getSelectColButtons(){
@@ -213,6 +190,14 @@ class Transfer extends Component {
             </div>
         )
     }
+}
+
+const swap=(list,current,next)=>{
+    let currentItem = list[current];
+    let nextItem = list[next];
+    list[current]=nextItem;
+    list[next]=currentItem;
+    return [...list];
 }
 
 export const ColumnBlank=(props)=>{

@@ -1,5 +1,4 @@
 import React, {Component} from "react"
-import FeatureItem from "./featureItem"
 import '../style/transfer.css';
 
 class FeatureList extends Component {
@@ -24,6 +23,18 @@ class FeatureList extends Component {
             </div>
         )
     }
+}
+
+const FeatureItem=(props)=>{
+    let {id, selected, text, click}=props;
+    return(
+        <li id={id}
+            onClick={()=>{click(id,!selected)}}
+            className={selected?"selected-column":"unselect-column"}>
+            <input type="checkbox" className="column-check-box" checked={selected}/>
+            <span className="column-item">{text}</span>
+        </li>
+    )
 }
 
 export default FeatureList;
