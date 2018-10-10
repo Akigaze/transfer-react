@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Transfer from "./component/transfer"
+import {cityList} from "./constant/list_data"
+
 import './style/App.css';
 
 class App extends Component {
@@ -7,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-            <Transfer/>
+            <Transfer availableList={cityList} displayList={[]}/>
         </header>
       </div>
     );

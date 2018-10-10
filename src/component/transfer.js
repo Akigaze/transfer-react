@@ -1,124 +1,126 @@
 import React, {Component} from "react"
 import FeatureList from "./featureList"
-import {cityList} from "../constant/list_data"
-
 
 class Transfer extends Component {
     constructor(props) {
         super(props);
-        let originalCities = cityList.map((city,i)=>{
-            return {cityName:city,id:i,selected:false}
+        let availableColumns = props.availableList.map((item,i)=>{
+            return {columnName:item,id:i,selected:false}
         });
-        this.state = {originalCities,displayCities:[]};
+        let displayColumns = props.displayList.map((item,i)=>{
+            return {columnName:item,id:i,selected:false}
+        });
+        this.state = {availableColumns,displayColumns};
+        console.log(this.state);
     }
 
     clickItem=(id,selected)=>{
-        let {originalCities,displayCities} = this.state;
-        originalCities.map((city,i)=>{
-            if(city.id===id){
-                city.selected=selected;
+        let {availableColumns,displayColumns} = this.state;
+        availableColumns.map((column,i)=>{
+            if(column.id===id){
+                column.selected=selected;
             }
-            return city;
+            return column;
         });
-        displayCities.map((city,i)=>{
-            if(city.id===id){
-                city.selected=selected;
+        displayColumns.map((column,i)=>{
+            if(column.id===id){
+                column.selected=selected;
             }
-            return city;
+            return column;
         });
         this.setState((preState)=>{
-            return {originalCities,displayCities}
+            return {availableColumns,displayColumns}
         });
     }
 
     addToDisplay=()=>{
-        let {originalCities,displayCities} = this.state;
-        let selectedCities=originalCities.filter((city,i)=>{
-            return city.selected;
+        let {availableColumns,displayColumns} = this.state;
+        let selectedColumns=availableColumns.filter((column,i)=>{
+            return column.selected;
         });
-        originalCities=originalCities.filter((city,i)=>{
-            return !city.selected;
+        availableColumns=availableColumns.filter((column,i)=>{
+            return !column.selected;
         });
-        displayCities=displayCities.concat(selectedCities);
+        displayColumns=displayColumns.concat(selectedColumns);
         this.setState((preState)=>{
-            return {originalCities,displayCities}
+            return {availableColumns,displayColumns}
         });
     }
 
-    backToOriginal=()=>{
-        let {originalCities,displayCities} = this.state;
-        let backedCities=displayCities.filter((city,i)=>{
-            return city.selected;
+    backToAvailable=()=>{
+        let {availableColumns,displayColumns} = this.state;
+        let backedColumns=displayColumns.filter((column,i)=>{
+            return column.selected;
         });
-        displayCities=displayCities.filter((city,i)=>{
-            return !city.selected;
+        displayColumns=displayColumns.filter((column,i)=>{
+            return !column.selected;
         });
-        originalCities=originalCities.concat(backedCities.map((city)=>{return{...city,selected:false}}));
-        originalCities.sort((pre,cur)=>{
+        availableColumns=availableColumns.concat(backedColumns);
+        availableColumns.sort((pre,cur)=>{
             return pre.id-cur.id;
         });
         this.setState((preState)=>{
-            return {originalCities,displayCities}
+            return {availableColumns,displayColumns}
         });
     }
 
     addAllToDisplay=()=>{
-        let {originalCities,displayCities} = this.state;
-        displayCities=displayCities.concat(originalCities.map((city)=>{return {...city,selected:true}}));
-        originalCities=[];
+        let {availableColumns,displayColumns} = this.state;
+        displayColumns=displayColumns.concat(availableColumns.map((column)=>{return {...column,selected:true}}));
+        availableColumns=[];
         this.setState((preState)=>{
-            return {originalCities,displayCities}
+            return {availableColumns,displayColumns}
         });
     }
 
-    backAllToOriginal=()=>{
-        let {originalCities,displayCities} = this.state;
-        originalCities=originalCities.concat(displayCities.map((city)=>{return {...city,selected:false}}));
-        displayCities=[];
-        originalCities.sort((pre,cur)=>{
+    backAllToAvailable=()=>{
+        let {availableColumns,displayColumns} = this.state;
+        availableColumns=availableColumns.concat(displayColumns.map((column)=>{return {...column,selected:true}}));
+        displayColumns=[];
+        availableColumns.sort((pre,cur)=>{
             return pre.id-cur.id;
         });
         this.setState((preState)=>{
-            return {originalCities,displayCities}
+            return {availableColumns,displayColumns}
         });
     }
 
     moveUp=()=>{
-        let {originalCities,displayCities} = this.state;
-        let cities=displayCities.filter((city)=>{
-            return city.selected;
+        let {availableColumns,displayColumns} = this.state;
+        let columns=displayColumns.filter((column)=>{
+            return column.selected;
         });
-        if(cities.length!==1){
+        if(columns.length!==1){
             return false;
         }
-        let upperCity = cities[0];
-        let index=displayCities.indexOf(upperCity);
+        let upperColumn = columns[0];
+        let index=displayColumns.indexOf(upperColumn);
         if(index>0){
-            let lastCity = displayCities[index-1];
-            displayCities[index]=lastCity;
-            displayCities[index-1]=upperCity;
+            let lastColumn = displayColumns[index-1];
+            displayColumns[index]=lastColumn;
+            displayColumns[index-1]=upperColumn;
             this.setState((preState)=>{
-                return {originalCities,displayCities}
+                return {availableColumns,displayColumns}
             })
         }
     }
 
     moveDown=()=>{
-        let {originalCities,displayCities} = this.state;
-        let cities=displayCities.filter((city)=>{
-            return city.selected;
+        let {availableColumns,displayColumns} = this.state;
+        let columns=displayColumns.filter((column)=>{
+            return column.selected;
         });
-        if(cities.length!==1){
+        if(columns.length!==1){
             return false;
         }
-        let downerCity = cities[0];
-        let index=displayCities.indexOf(downerCity);
-        if(index<displayCities.length-1){
-            let nextCity = displayCities[index+1];
-            displayCities[index]=nextCity;
-            displayCities[index+1]=downerCity;
+        let downerColumn = columns[0];
+        let index=displayColumns.indexOf(downerColumn);
+        if(index<displayColumns.length-1){
+            let nextColumn = displayColumns[index+1];
+            displayColumns[index]=nextColumn;
+            displayColumns[index+1]=downerColumn;
             this.setState((preState)=>{
-                return {originalCities,displayCities}
+                return {availableColumns,displayColumns}
             })
         }
     }
@@ -126,9 +128,9 @@ class Transfer extends Component {
     getFunctionBtnList(){
         let functions=[
             { func:this.addToDisplay, describe:" >" },
-            { func:this.backToOriginal, describe:"< " },
+            { func:this.backToAvailable, describe:"< " },
             { func:this.addAllToDisplay, describe:"all >" },
-            { func:this.backAllToOriginal, describe:"< all" },
+            { func:this.backAllToAvailable, describe:"< all" },
             { func:this.moveUp, describe:"^" },
             { func:this.moveDown, describe:"v" },
         ];
@@ -149,11 +151,17 @@ class Transfer extends Component {
     render(){
         return(
             <div className="transfer">
-                <FeatureList cities={this.state.originalCities} clickItem={this.clickItem} title="Original Cities"/>
+                <FeatureList columns={this.state.availableColumns} clickItem={this.clickItem} title="Available Columns"/>
                 <div className="btn-list">
-                    {this.getFunctionBtnList()}
+                    <span className="btn-label">Select Column</span>
+                    <input type="button" value="Add" className="function-btn" onClick={this.addToDisplay}/><br/>
+                    <input type="button" value="Remove" className="function-btn" onClick={this.backToAvailable}/><br/>
+                    <input type="button" value="Remove all" className="function-btn" onClick={this.backAllToAvailable}/><br/>
+                    <span className="btn-label">Column Order</span>
+                    <input type="button" value="Move Up" className="function-btn" onClick={this.moveUp}/><br/>
+                    <input type="button" value="Move Down" className="function-btn" onClick={this.moveDown}/><br/>
                 </div>
-                <FeatureList cities={this.state.displayCities}  clickItem={this.clickItem} title="Display Cities"/>
+                <FeatureList columns={this.state.displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
             </div>
         )
     }

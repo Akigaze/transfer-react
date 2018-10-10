@@ -13,12 +13,11 @@ class FeatureItem extends Component {
 
     render(){
         return(
-            <li onClick={this.click}
-                className={this.props.selected?"selected-city":"unselect-city"}
-                id={this.props.id}
-            >
-                <input type="checkbox" className="city-check-box" checked={this.props.selected}/>
-                <span className="city-item">{this.props.city}</span>
+            <li id={this.props.id}
+                onClick={this.click}
+                className={this.props.selected?"selected-column":"unselect-column"}>
+                <input type="checkbox" className="column-check-box" checked={this.props.selected}/>
+                <span className="column-item">{this.props.text}</span>
             </li>
         )
     }

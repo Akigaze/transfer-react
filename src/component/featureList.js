@@ -7,23 +7,22 @@ class FeatureList extends Component {
         super(props);
     }
 
-    getCityList(){
-        let {cities} = this.props;
-        let cityList = cities.map((city,index) => {
+    getColumnList(){
+        let columnList = this.props.columns.map((column,index) => {
+            let {columnName,id,selected}=column;
             return (
-                <FeatureItem key={`city-${index}`} city={city.cityName} id={city.id} selected={city.selected} click={this.props.clickItem}/>
+                <FeatureItem key={`column-${index}`} text={columnName} id={id} selected={selected} click={this.props.clickItem}/>
             )
         });
-        return cityList;
+        return columnList;
     }
 
     render(){
         return(
             <div className="feature-div">
-
+                <span className="feature-list-header">{this.props.title}</span>
                 <ol className="feature-list">
-                    <span className="reature-list-header">{this.props.title}</span>
-                    {this.getCityList()}
+                    {this.getColumnList()}
                 </ol>
             </div>
         )
