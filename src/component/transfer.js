@@ -125,46 +125,45 @@ class Transfer extends Component {
         }
     }
 
-    getFunctionBtnList(){
-        let functions=[
-            { func:this.addToDisplay, describe:" >" },
-            { func:this.backToAvailable, describe:"< " },
-            { func:this.addAllToDisplay, describe:"all >" },
-            { func:this.backAllToAvailable, describe:"< all" },
-            { func:this.moveUp, describe:"^" },
-            { func:this.moveDown, describe:"v" },
-        ];
-        let functionBtnList=functions.map((fun,i)=>{
-            return (
-                <div key={`fun-${i}`}>
-                    <input type="button"
-                        value={fun.describe}
-                        className="function-btn"
-                        onClick={fun.func} />
-                    <br/>
-                </div>
-            )
-        });
-        return functionBtnList;
-    }
-
     render(){
+        let selectColButtons=[
+            {text:"Add",clickHandler:this.addToDisplay},
+            {text:"Remove",clickHandler:this.backToAvailable},
+            {text:"Remove all",clickHandler:this.backAllToAvailable}
+        ];
+        let colOrderButtons=[
+            {text:"Move up",clickHandler:this.moveUp},
+            {text:"Move down",clickHandler:this.moveDown},
+        ];
+        let {availableColumns,displayColumns}=this.state;
         return(
             <div className="transfer">
-                <FeatureList columns={this.state.availableColumns} clickItem={this.clickItem} title="Available Columns"/>
+                <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns"/>
                 <div className="btn-list">
-                    <span className="btn-label">Select Column</span>
-                    <input type="button" value="Add" className="function-btn" onClick={this.addToDisplay}/><br/>
-                    <input type="button" value="Remove" className="function-btn" onClick={this.backToAvailable}/><br/>
-                    <input type="button" value="Remove all" className="function-btn" onClick={this.backAllToAvailable}/><br/>
-                    <span className="btn-label">Column Order</span>
-                    <input type="button" value="Move Up" className="function-btn" onClick={this.moveUp}/><br/>
-                    <input type="button" value="Move Down" className="function-btn" onClick={this.moveDown}/><br/>
+                    <ButtonList title="Select Columns" buttons={selectColButtons}/>
+                    <ButtonList title="Columns Order" buttons={colOrderButtons}/>
                 </div>
-                <FeatureList columns={this.state.displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
+                <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
             </div>
         )
     }
+}
+
+export const ButtonList=(props)=>{
+    let {title,buttons}=props;
+    return(
+        <div>
+            <span className="btn-label">{title}</span>
+            {
+                buttons.map((button)=>{
+                    let {text,clickHandler}=button;
+                    return (
+                        <input type="button" value={text} className="function-btn" onClick={clickHandler} />
+                    );
+                })
+            }
+        </div>
+    )
 }
 
 export default Transfer;
