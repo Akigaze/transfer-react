@@ -107,12 +107,11 @@
 
 .function-btn-available{
     color: #fff;
-    /* background-color: #0b85ff; */
     background: #1d8bfb;
     border: 1px solid #0b85ff;
 }
 
-.function-btn-available:hover{
+.function-btn-available:hover,.save-btn:hover,.cancel-btn:hover{
     color: #f0f0f0;
     background: #00a1d6;
     border: 1px solid #00a1d6;
@@ -163,10 +162,10 @@
     text-align: right;
 }
 
-.save-btn,.cancel-btn{
-    margin: 0 20px;
+.save-btn,.cancel-btn,.save-disabled{
+    margin: 0 16px;
     transition: 360ms;
-    min-width: 64px;
+    min-width: 72px;
     height: 32px;
     border-radius: 2px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
@@ -188,4 +187,10 @@
 
 .save-btn{
 
+}
+
+.save-disabled{
+    background: #efefef;
+    color: #6b6b6b;
+    border: 1px solid #e2e2e2;
 }

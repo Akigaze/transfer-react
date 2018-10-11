@@ -1,24 +1,28 @@
 import React, {Component} from "react"
 import FeatureList from "./featureList"
+import {isEqual,isEmpty} from "lodash"
 
 class Transfer extends Component {
     constructor(props) {
         super(props);
-        this.state = this.initState(props);
+        let [availableColumns, displayColumns] = this.buildAvailableAndDisplayColumns(props);
+        this.originalColumns = [
+            ...availableColumns.map(col => col.tid),
+            ...displayColumns.map(col => col.tid)
+        ];
+        this.originalAvailableColumns=availableColumns.map(col => col.tid);
+        this.originalDisplayColumns=displayColumns.map(col => col.tid);
+        this.originalColumns=[...this.originalAvailableColumns,...this.originalDisplayColumns];
+        this.state = this.initState(props, availableColumns, displayColumns);
     }
 
-    initState(props) {
-        let availableColumns = props.availableList.map((item,i) => {
-            return {columnName:item, id:i, selected:false}
-        });
-        let displayColumns = props.displayList.map((item,i) => {
-            return {columnName:item, id:i, selected:false}
-        });
+    initState(props, availableColumns, displayColumns) {
         let addAvailable = this.isAvailableWhenHasSelected(availableColumns);
         let removeAvailable = this.isAvailableWhenHasSelected(displayColumns);
         let removeAllAvailable = this.isAvailableWhenHasColumns(displayColumns);
         let moveUpAvailable = this.isAvailableWhenOneCanUp(displayColumns);
         let moveDownAvailable = this.isAvailableWhenOneCanDown(displayColumns);
+        let saveAvailable = this.isColumnsChanged(...availableColumns,...displayColumns);
 
         return {
             availableColumns,
@@ -27,8 +31,49 @@ class Transfer extends Component {
             removeAvailable,
             removeAllAvailable,
             moveUpAvailable,
-            moveDownAvailable
+            moveDownAvailable,
+            saveAvailable
         }
+    }
+
+    buildAvailableAndDisplayColumns(props){
+        let {useId, showText, availableList, displayList} = props;
+        let availableColumns = [];
+        let displayColumns = [];
+        if(arrayAllHasOwnProperty([...availableList,...displayList],useId)){
+            availableColumns = availableList.map((item) => {
+                return {...item,
+                        columnName:ownIfNoSuchProperty(item, showText),
+                        tid:item[useId],
+                        selected:false
+                }
+            });
+            displayColumns = displayList.map((item,id) => {
+                return {...item,
+                        columnName:ownIfNoSuchProperty(item, showText),
+                        tid:item[useId],
+                        selected:false
+                }
+            });
+        }else{
+            let id = 0;
+            availableColumns = availableList.map((item) => {
+                return {...item,
+                    columnName:ownIfNoSuchProperty(item, showText),
+                    tid:id++,
+                    selected:false
+                }
+            });
+            displayColumns = displayList.map((item,id) => {
+                return {...item,
+                    columnName:ownIfNoSuchProperty(item, showText),
+                    tid:id++,
+                    selected:false
+                }
+            });
+        }
+        availableColumns = sortBy(availableColumns,"tid");
+        return [availableColumns, displayColumns];
     }
 
     isAvailableWhenHasSelected(columns) {
@@ -60,12 +105,19 @@ class Transfer extends Component {
         return false;
     }
 
+    isColumnsChanged(...columns){
+        console.log(!isEqual(this.originalColumns,columns.map(col => col.tid )));
+        return !isEqual(this.originalColumns,columns.map(col => col.tid ));
+    }
+
     updateState(availableColumns,displayColumns){
         let addAvailable = this.isAvailableWhenHasSelected(availableColumns);
         let removeAvailable = this.isAvailableWhenHasSelected(displayColumns);
         let removeAllAvailable = this.isAvailableWhenHasColumns(displayColumns);
         let moveUpAvailable = this.isAvailableWhenOneCanUp(displayColumns);
         let moveDownAvailable = this.isAvailableWhenOneCanDown(displayColumns);
+        let saveAvailable = this.isColumnsChanged(...availableColumns,...displayColumns);
+
         this.setState((preState) => {
             return {
                 availableColumns,
@@ -74,18 +126,19 @@ class Transfer extends Component {
                 removeAvailable,
                 removeAllAvailable,
                 moveUpAvailable,
-                moveDownAvailable
+                moveDownAvailable,
+                saveAvailable
             }
         });
     }
 
-    clickItem = (id, selected) => {
+    clickItem = (tid, selected) => {
         let {availableColumns, displayColumns} = this.state;
         availableColumns = availableColumns.map((column) => {
-            return column.id === id ? {...column, selected} : column;
+            return column.tid === tid ? {...column, selected} : column;
         });
         displayColumns = displayColumns.map((column) => {
-            return column.id === id ? {...column, selected} : column;
+            return column.tid === tid ? {...column, selected} : column;
         });
         this.updateState(availableColumns, displayColumns);
     }
@@ -113,7 +166,7 @@ class Transfer extends Component {
         [displayColumns, availableColumns] = this.transferSelectedItems(
             displayColumns, availableColumns
         );
-        availableColumns.sort((pre, cur) => { return pre.id-cur.id });
+        availableColumns = sortBy(availableColumns,"tid");
         this.updateState(availableColumns, displayColumns);
     }
 
@@ -136,7 +189,7 @@ class Transfer extends Component {
             })
         );
         displayColumns=[];
-        availableColumns.sort((pre,cur)=>{ return pre.id-cur.id });
+        availableColumns = sortBy(availableColumns,"tid");
         this.updateState(availableColumns,displayColumns);
     }
 
@@ -186,14 +239,38 @@ class Transfer extends Component {
         ]
     }
 
-    render(){
+    onSave=()=>{
         let {availableColumns, displayColumns} = this.state;
+        this.props.save([...availableColumns].concat(displayColumns))
+        availableColumns.forEach((col)=>{col.selected = false});
+        displayColumns.forEach((col)=>{col.selected = false});
+        this.updateState(availableColumns,displayColumns);
+    }
+
+    onCancel=()=>{
+        this.props.cancel();
+        let {availableColumns, displayColumns} = this.state;
+        let allColumns = [...availableColumns].concat(displayColumns);
+        allColumns.forEach((col)=>{col.selected = false});
+        availableColumns = this.originalAvailableColumns.map((tid)=>{
+            return allColumns.find(col => col.tid===tid)
+        })
+        displayColumns = this.originalDisplayColumns.map((tid)=>{
+            return allColumns.find(col => col.tid===tid)
+        });
+        this.updateState(availableColumns,displayColumns);
+
+    }
+
+    render(){
+        let {availableColumns, displayColumns, saveAvailable} = this.state;
+        let {showCheckbox, cancelAndSave} = this.props;
         let selectColButtons = this.getSelectColButtons()
         let columnOrderButtons = this.getColumnOrderButtons();
         return(
             <div className="transfer">
                 <div className="transfer-core">
-                    <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns" checkbox={this.props.showCheckbox}/>
+                    <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns" checkbox={showCheckbox}/>
                     <div className="btn-list">
                         <ButtonList title="Select Columns" buttons={selectColButtons}/>
                         <ColumnBlank height="40" />
@@ -201,13 +278,21 @@ class Transfer extends Component {
                     </div>
                     <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns" checkbox={this.props.showCheckbox}/>
                 </div>
-                {this.props.cancelAndSave && (
+                {cancelAndSave && (
                     <div className="cancel-and-save">
-                        <input type="button" value="Cancel" className="cancel-btn" />
-                        <input type="button" value="Save" className="save-btn" />
+                        <input type="button"
+                               value="Cancel"
+                               className="cancel-btn"
+                               onClick={this.onCancel}
+                        />
+                        <input type="button"
+                               value="Save"
+                               className={saveAvailable?"save-btn":"save-disabled"}
+                               disabled={saveAvailable?"":"disabled"}
+                               onClick={this.onSave}
+                        />
                     </div>
                 )}
-
             </div>
         )
     }
@@ -219,6 +304,30 @@ const swap=(list,current,next)=>{
     list[current]=nextItem;
     list[next]=currentItem;
     return [...list];
+}
+
+const arrayAllHasOwnProperty=(array,property)=>{
+    if(isEmpty(array)){
+        return false;
+    }
+    return !array.some((item) => {
+        return !item.hasOwnProperty(property)
+    });
+}
+
+const ownIfNoSuchProperty=(obj, property)=>{
+    return obj.hasOwnProperty(property) ? obj[property]:JSON.stringify(obj)
+}
+
+const sortBy=(array, by)=>{
+    array.sort((pre, cur) => {
+        if(typeof(pre[by])==="string"){
+            return pre[by].localeCompare(cur[by])
+        }else{
+            return pre[by]-cur[by]
+        }
+    });
+    return array;
 }
 
 export const ColumnBlank=(props)=>{

@@ -4,10 +4,17 @@ import '../style/transfer.css';
 class FeatureList extends Component {
 
     getColumnList(){
-        let columnList = this.props.columns.map((column,index) => {
-            let {columnName,id,selected}=column;
+        let {checkbox, columns, clickItem} = this.props;
+        let columnList = columns.map((column,index) => {
+            let {columnName,tid,selected}=column;
             return (
-                <FeatureItem key={`${columnName}-${index}`} text={columnName} id={id} selected={selected} click={this.props.clickItem}/>
+                <FeatureItem key={`${columnName}-${index}`}
+                    tid={tid}
+                    text={columnName}
+                    selected={selected}
+                    click={clickItem}
+                    checkbox={checkbox}
+                />
             )
         });
         return columnList;
@@ -26,12 +33,14 @@ class FeatureList extends Component {
 }
 
 const FeatureItem=(props)=>{
-    let {id, selected, text, click, checkbox}=props;
+    let {tid, selected, text, click, checkbox}=props;
     return(
-        <li id={id}
-            onClick={()=>{click(id,!selected)}}
+        <li tid={tid}
+            onClick={()=>{click(tid,!selected)}}
             className={selected?"selected-column":"unselect-column"}>
-            {checkbox && (<input type="checkbox" className="column-check-box" checked={selected}/>)}
+            {checkbox && (
+                <input type="checkbox" className="column-check-box" checked={selected}/>
+            )}
             <span className="column-item">{text}</span>
         </li>
     )

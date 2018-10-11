@@ -10,3 +10,16 @@ export const cityList = [
     "Miami",
     "Singapore"
 ]
+
+export const countryList = [
+    {name:"Toronto"},
+    {name:"London"},
+    {name:"Hongkong"},
+    {name:"Tokyo"},
+    {name:"Washington"},
+    {name:"Moscow"},
+    {name:"Shanghai"},
+    {name:"Paris"},
+    {name:"Miami"},
+    {name:"Singapore"}
+]
