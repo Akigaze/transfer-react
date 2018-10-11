@@ -24,10 +24,13 @@
 }
 
 .transfer{
-    display: flex;
     border: solid 1px #979797;
     background-color: #f1f7fd;
-    padding: 40px;
+}
+
+.transfer-core{
+    display: flex;
+    padding: 40px 40px 20px 40px;
 }
 
 .selected-column,.unselect-column{
@@ -107,7 +110,6 @@
     /* background-color: #0b85ff; */
     background: #1d8bfb;
     border: 1px solid #0b85ff;
-
 }
 
 .function-btn-available:hover{
@@ -154,4 +156,36 @@
     height: 14px;
     width: 14px;
     background-color: white;
+}
+
+.cancel-and-save{
+    padding: 10px 40px 20px 40px;
+    text-align: right;
+}
+
+.save-btn,.cancel-btn{
+    margin: 0 20px;
+    transition: 360ms;
+    min-width: 64px;
+    height: 32px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    font-family: ProximaNova;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #fff;
+    background: #1d8bfb;
+    border: 1px solid #0b85ff;
+}
+
+.cancel-btn{
+
+}
+
+.save-btn{
+
 }

@@ -26,12 +26,12 @@ class FeatureList extends Component {
 }
 
 const FeatureItem=(props)=>{
-    let {id, selected, text, click}=props;
+    let {id, selected, text, click, checkbox}=props;
     return(
         <li id={id}
             onClick={()=>{click(id,!selected)}}
             className={selected?"selected-column":"unselect-column"}>
-            <input type="checkbox" className="column-check-box" checked={selected}/>
+            {checkbox && (<input type="checkbox" className="column-check-box" checked={selected}/>)}
             <span className="column-item">{text}</span>
         </li>
     )

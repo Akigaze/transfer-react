@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-            <Transfer availableList={cityList} displayList={[]}/>
+            <Transfer availableList={cityList} displayList={[]} showCheckbox={false} cancelAndSave={true}/>
         </header>
       </div>
     );

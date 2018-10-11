@@ -4,7 +4,7 @@ import FeatureList from "./featureList"
 class Transfer extends Component {
     constructor(props) {
         super(props);
-        this.initState(props);
+        this.state = this.initState(props);
     }
 
     initState(props) {
@@ -20,7 +20,7 @@ class Transfer extends Component {
         let moveUpAvailable = this.isAvailableWhenOneCanUp(displayColumns);
         let moveDownAvailable = this.isAvailableWhenOneCanDown(displayColumns);
 
-        this.state = {
+        return {
             availableColumns,
             displayColumns,
             addAvailable,
@@ -28,7 +28,7 @@ class Transfer extends Component {
             removeAllAvailable,
             moveUpAvailable,
             moveDownAvailable
-        };
+        }
     }
 
     isAvailableWhenHasSelected(columns) {
@@ -192,13 +192,22 @@ class Transfer extends Component {
         let columnOrderButtons = this.getColumnOrderButtons();
         return(
             <div className="transfer">
-                <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns"/>
-                <div className="btn-list">
-                    <ButtonList title="Select Columns" buttons={selectColButtons}/>
-                    <ColumnBlank height="40" />
-                    <ButtonList title="Columns Order" buttons={columnOrderButtons}/>
+                <div className="transfer-core">
+                    <FeatureList columns={availableColumns} clickItem={this.clickItem} title="Available Columns" checkbox={this.props.showCheckbox}/>
+                    <div className="btn-list">
+                        <ButtonList title="Select Columns" buttons={selectColButtons}/>
+                        <ColumnBlank height="40" />
+                        <ButtonList title="Columns Order" buttons={columnOrderButtons}/>
+                    </div>
+                    <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns" checkbox={this.props.showCheckbox}/>
                 </div>
-                <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns"/>
+                {this.props.cancelAndSave && (
+                    <div className="cancel-and-save">
+                        <input type="button" value="Cancel" className="cancel-btn" />
+                        <input type="button" value="Save" className="save-btn" />
+                    </div>
+                )}
+
             </div>
         )
     }
