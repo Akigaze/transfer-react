@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import FeatureList from "./featureList"
-import {isEqual,isEmpty} from "lodash"
+import {isEqual,isEmpty,groupBy} from "lodash"
 
 class Transfer extends Component {
     constructor(props) {
@@ -106,7 +106,6 @@ class Transfer extends Component {
     }
 
     isColumnsChanged(...columns){
-        console.log(!isEqual(this.originalColumns,columns.map(col => col.tid )));
         return !isEqual(this.originalColumns,columns.map(col => col.tid ));
     }
 
@@ -144,14 +143,9 @@ class Transfer extends Component {
     }
 
     transferSelectedItems(givenList, recivedList) {
-        let selectedColumns = givenList.filter((column) => {
-            return column.selected;
-        });
-        givenList = givenList.filter((column) => {
-            return !column.selected;
-        });
-        recivedList = recivedList.concat(selectedColumns);
-        return [givenList, recivedList];
+        let {"true":selectedColumns, "false":unSelectedColumns} = groupBy(givenList,"selected")
+        let afterRecivedList = [...recivedList].concat(selectedColumns);
+        return [unSelectedColumns, afterRecivedList];
     }
 
     addToDisplay = () => {
