@@ -211,6 +211,24 @@ class Transfer extends Component {
         }
     }
 
+    onSave=()=>{
+        let {availableColumns, displayColumns} = this.state;
+        this.props.save([...availableColumns].concat(displayColumns))
+        availableColumns.forEach((col)=>{col.selected = false});
+        displayColumns.forEach((col)=>{col.selected = false});
+        this.updateState(availableColumns,displayColumns);
+    }
+
+    onCancel=()=>{
+        this.props.cancel();
+        let {availableColumns, displayColumns} = this.state;
+        let allColumns = [...availableColumns].concat(displayColumns);
+        allColumns.forEach((col)=>{col.selected = false});
+        availableColumns = mapFromAnotherBy(this.originalAvailableColumns, allColumns, "tid");
+        displayColumns = mapFromAnotherBy(this.originalDisplayColumns, allColumns, "tid");
+        this.updateState(availableColumns,displayColumns);
+    }
+
     getOnlyMoveItem (columns) {
         let selectedCols = columns.filter(column => { return column.selected });
         return selectedCols.length ===1 ? selectedCols[0] : null;
@@ -233,29 +251,6 @@ class Transfer extends Component {
         ]
     }
 
-    onSave=()=>{
-        let {availableColumns, displayColumns} = this.state;
-        this.props.save([...availableColumns].concat(displayColumns))
-        availableColumns.forEach((col)=>{col.selected = false});
-        displayColumns.forEach((col)=>{col.selected = false});
-        this.updateState(availableColumns,displayColumns);
-    }
-
-    onCancel=()=>{
-        this.props.cancel();
-        let {availableColumns, displayColumns} = this.state;
-        let allColumns = [...availableColumns].concat(displayColumns);
-        allColumns.forEach((col)=>{col.selected = false});
-        availableColumns = this.originalAvailableColumns.map((tid)=>{
-            return allColumns.find(col => col.tid===tid)
-        })
-        displayColumns = this.originalDisplayColumns.map((tid)=>{
-            return allColumns.find(col => col.tid===tid)
-        });
-        this.updateState(availableColumns,displayColumns);
-
-    }
-
     render(){
         let {availableColumns, displayColumns, saveAvailable} = this.state;
         let {showCheckbox, cancelAndSave} = this.props;
@@ -270,21 +265,12 @@ class Transfer extends Component {
                         <ColumnBlank height="40" />
                         <ButtonList title="Columns Order" buttons={columnOrderButtons}/>
                     </div>
-                    <FeatureList columns={displayColumns}  clickItem={this.clickItem} title="Display Columns" checkbox={this.props.showCheckbox}/>
+                    <FeatureList columns={displayColumns} clickItem={this.clickItem} title="Display Columns" checkbox={this.props.showCheckbox}/>
                 </div>
                 {cancelAndSave && (
                     <div className="cancel-and-save">
-                        <input type="button"
-                               value="Cancel"
-                               className="cancel-btn"
-                               onClick={this.onCancel}
-                        />
-                        <input type="button"
-                               value="Save"
-                               className={saveAvailable?"save-btn":"save-disabled"}
-                               disabled={saveAvailable?"":"disabled"}
-                               onClick={this.onSave}
-                        />
+                        <input type="button" value="Cancel" className="cancel-btn" onClick={this.onCancel} />
+                        <input type="button" value="Save" className={saveAvailable ? "save-btn":"save-disabled"} disabled={saveAvailable?"":"disabled"} onClick={this.onSave} />
                     </div>
                 )}
             </div>
@@ -301,12 +287,7 @@ const swap=(list,current,next)=>{
 }
 
 const arrayAllHasOwnProperty=(array,property)=>{
-    if(isEmpty(array)){
-        return false;
-    }
-    return !array.some((item) => {
-        return !item.hasOwnProperty(property)
-    });
+    return isEmpty(array) && !array.some(item => !item.hasOwnProperty(property) )
 }
 
 const ownIfNoSuchProperty=(obj, property)=>{
@@ -315,17 +296,13 @@ const ownIfNoSuchProperty=(obj, property)=>{
 
 const sortBy=(array, by)=>{
     array.sort((pre, cur) => {
-        if(typeof(pre[by])==="string"){
-            return pre[by].localeCompare(cur[by])
-        }else{
-            return pre[by]-cur[by]
-        }
+        return typeof(pre[by])==="string" ? pre[by].localeCompare(cur[by]) : pre[by]-cur[by]
     });
     return array;
 }
 
-export const ColumnBlank=(props)=>{
-    return <div style={{height:`${props.height}px`}}></div>
+const mapFromAnotherBy=(aim, source, by)=>{
+    return aim.map(item => source.find(col => col[by]===item) )
 }
 
 const mapButtonTags=(buttons)=>{
@@ -351,6 +328,10 @@ const ButtonList=(props)=>{
             {mapButtonTags(buttons)}
         </div>
     )
+}
+
+export const ColumnBlank=(props)=>{
+    return <div style={{height:`${props.height}px`}}></div>
 }
 
 export default Transfer;
