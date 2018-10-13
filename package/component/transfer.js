@@ -1,6 +1,8 @@
 import React, {Component} from "react"
-import FeatureList from "./featureList"
 import {isEqual,isEmpty,groupBy} from "lodash"
+
+import FeatureList from "./featureList"
+import '../style/transfer.css';
 
 class Transfer extends Component {
     constructor(props) {
@@ -213,13 +215,10 @@ class Transfer extends Component {
 
     onSave=()=>{
         let {availableColumns, displayColumns} = this.state;
+        this.props.save([...availableColumns].concat(displayColumns))
         availableColumns.forEach((col)=>{col.selected = false});
         displayColumns.forEach((col)=>{col.selected = false});
-        this.originalAvailableColumns=availableColumns.map(col => col.tid);
-        this.originalDisplayColumns=displayColumns.map(col => col.tid);
-        this.originalColumns=[...this.originalAvailableColumns,...this.originalDisplayColumns];
-        this.props.save({availableColumns,displayColumns})
-        this.updateState(availableColumns,displayColumns);
+        this.updateState({availableColumns,displayColumns});
     }
 
     onCancel=()=>{
